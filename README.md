@@ -1,53 +1,87 @@
-Website Auto-Refresher
-A Python script that automatically refreshes a website at specified intervals using Selenium and Chrome WebDriver.
-Features
+# Website Auto-Refresher
 
-Open website in Chrome browser
-Refresh at fixed or random intervals
-Real-time refresh status and counts
-Error handling and automatic recovery
-Clean browser shutdown on exit
+A Python script that automatically refreshes multiple websites simultaneously at specified intervals using Selenium and Chrome WebDriver.
 
-Prerequisites
+## Features
+
+- Open multiple websites in separate Chrome windows
+- Refresh each website independently at fixed or random intervals
+- Real-time refresh status and counts for each website
+- Error handling and automatic recovery per window
+- Clean browser shutdown on exit
+- Threading support for parallel execution
+
+## Prerequisites
+
 Before running the script, make sure you have:
 
-Python 3.6 or higher installed
-Google Chrome browser installed
-ChromeDriver that matches your Chrome version
+1. Python 3.6 or higher installed
+2. Google Chrome browser installed
+3. ChromeDriver that matches your Chrome version
 
-Installation
+## Installation
 
-Clone this repository or download the script:
-
-bashCopygit clone <your-repository-url>
+1. Clone this repository or download the script:
+```bash
+git clone <your-repository-url>
 cd website-refresher
+```
 
-Install required Python package:
+2. Install required Python package:
+```bash
+pip install selenium
+```
 
-bashCopypip install selenium
+3. Install ChromeDriver:
+   - Visit https://sites.google.com/chromium.org/driver/
+   - Download the version matching your Chrome browser
+   - Extract the executable and add it to your system PATH
 
-Install ChromeDriver:
+## Usage
 
-Visit https://sites.google.com/chromium.org/driver/
-Download the version matching your Chrome browser
-Extract the executable and add it to your system PATH
+### Basic Usage
 
+Refresh a single website every 60 seconds:
+```bash
+python refresher.py https://example.com --interval 60
+```
 
+Refresh multiple websites simultaneously:
+```bash
+python refresher.py https://example1.com https://example2.com https://example3.com --interval 60
+```
 
-Usage
-Basic Usage
-Refresh a website every 60 seconds:
-bashCopypython refresher.py https://example.com --interval 60
-Advanced Usage
-Refresh with random intervals between 30 and 90 seconds:
-bashCopypython refresher.py https://example.com --random --min 30 --max 90
-Command Line Arguments
+### Advanced Usage
 
-url: The website URL to refresh (required)
--i, --interval: Interval between refreshes in seconds (default: 60)
--r, --random: Use random intervals between min and max values
---min: Minimum interval for random timing (seconds)
---max: Maximum interval for random timing (seconds)
+Refresh multiple websites with random intervals between 30 and 90 seconds:
+```bash
+python refresher.py https://example1.com https://example2.com --random --min 30 --max 90
+```
 
-Stopping the Script
-Press Ctrl+C to stop the script. The browser will close automatically.
+### Command Line Arguments
+
+- `urls`: One or more website URLs to refresh (required)
+- `-i, --interval`: Interval between refreshes in seconds (default: 60)
+- `-r, --random`: Use random intervals between min and max values
+- `--min`: Minimum interval for random timing (seconds)
+- `--max`: Maximum interval for random timing (seconds)
+
+## Stopping the Script
+
+Press `Ctrl+C` to stop the script. All browser windows will close automatically.
+
+## Error Handling
+
+The script includes automatic recovery mechanisms for each window:
+- Attempts to refresh the page if there's an error
+- Reloads the entire page if refresh fails
+- Restarts the browser if page reload fails
+- Each window operates independently - if one fails, others continue running
+
+## Contributing
+
+Feel free to submit issues and enhancement requests!
+
+## License
+
+[Your chosen license]

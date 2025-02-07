@@ -42,7 +42,6 @@ def refresh_website(url, interval, random_interval=False, min_interval=None, max
     refresh_count = 0
     
     try:
-        # Initial page load
         print(f"Opening {url}...")
         driver.get(url)
         
@@ -51,11 +50,9 @@ def refresh_website(url, interval, random_interval=False, min_interval=None, max
                 refresh_count += 1
                 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 
-                # Refresh the page
                 driver.refresh()
                 print(f"[{current_time}] Refresh #{refresh_count} completed")
                 
-                # Calculate wait time
                 if random_interval and min_interval and max_interval:
                     wait_time = random.uniform(min_interval, max_interval)
                 else:
@@ -68,7 +65,7 @@ def refresh_website(url, interval, random_interval=False, min_interval=None, max
                 print(f"Error during refresh: {e}")
                 print("Attempting to recover...")
                 try:
-                    driver.get(url)  # Try to reload the page completely
+                    driver.get(url)
                 except:
                     print("Failed to recover. Restarting browser...")
                     driver.quit()

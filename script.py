@@ -1,22 +1,35 @@
-import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import WebDriverException
 import time
-import random
-from datetime import datetime
 import argparse
-from urllib.parse import urlparse
+from datetime import datetime
+import random
 import sys
 
-def validate_url(url):
-    """Validate if the provided URL is properly formatted."""
+def setup_driver():
+    """Setup and return Chrome WebDriver with configured options"""
+    chrome_options = Options()
+    # Uncomment the line below if you want to run in headless mode (no visible browser)
+    # chrome_options.add_argument('--headless')
+    
+    # Add some common options to make browser more stable
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--disable-gpu')
+    
     try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
-    except Exception:
-        return False
+        driver = webdriver.Chrome(options=chrome_options)
+        return driver
+    except Exception as e:
+        print(f"Error setting up Chrome WebDriver: {e}")
+        print("Make sure you have Chrome and ChromeDriver installed.")
+        sys.exit(1)
 
 def refresh_website(url, interval, random_interval=False, min_interval=None, max_interval=None):
     """
-    Continuously refresh a website at specified intervals.
+    Open website in Chrome and continuously refresh it.
     
     Args:
         url (str): The website URL to refresh
@@ -25,31 +38,22 @@ def refresh_website(url, interval, random_interval=False, min_interval=None, max
         min_interval (int): Minimum interval for random timing
         max_interval (int): Maximum interval for random timing
     """
-    
-    if not validate_url(url):
-        print(f"Error: Invalid URL format - {url}")
-        sys.exit(1)
-    
-    # Initialize session to maintain cookies and connection
-    session = requests.Session()
-    
-    # Add headers to mimic a real browser
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-    
+    driver = setup_driver()
     refresh_count = 0
     
     try:
+        # Initial page load
+        print(f"Opening {url}...")
+        driver.get(url)
+        
         while True:
             try:
-                # Make the request
-                response = session.get(url, headers=headers, timeout=10)
                 refresh_count += 1
-                
-                # Print status
                 current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                print(f"[{current_time}] Refresh #{refresh_count}: Status Code {response.status_code}")
+                
+                # Refresh the page
+                driver.refresh()
+                print(f"[{current_time}] Refresh #{refresh_count} completed")
                 
                 # Calculate wait time
                 if random_interval and min_interval and max_interval:
@@ -60,18 +64,26 @@ def refresh_website(url, interval, random_interval=False, min_interval=None, max
                 # Wait before next refresh
                 time.sleep(wait_time)
                 
-            except requests.RequestException as e:
-                print(f"Error during request: {e}")
-                print("Waiting 30 seconds before retrying...")
-                time.sleep(30)
+            except WebDriverException as e:
+                print(f"Error during refresh: {e}")
+                print("Attempting to recover...")
+                try:
+                    driver.get(url)  # Try to reload the page completely
+                except:
+                    print("Failed to recover. Restarting browser...")
+                    driver.quit()
+                    driver = setup_driver()
+                    driver.get(url)
                 continue
             
     except KeyboardInterrupt:
         print("\nScript stopped by user")
-        sys.exit(0)
+    finally:
+        print("Closing browser...")
+        driver.quit()
 
 def main():
-    parser = argparse.ArgumentParser(description='Auto-refresh a website at specified intervals')
+    parser = argparse.ArgumentParser(description='Auto-refresh a website using Chrome browser')
     parser.add_argument('url', help='The website URL to refresh')
     parser.add_argument('-i', '--interval', type=float, default=60,
                         help='Interval between refreshes in seconds (default: 60)')
@@ -91,8 +103,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-"""
-Example of run command: python script.py https://youtube.com --random --min 30 --max 90
-"""
-

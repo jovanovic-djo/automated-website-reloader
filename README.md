@@ -77,11 +77,6 @@ The script includes automatic recovery mechanisms for each window:
 - Reloads the entire page if refresh fails
 - Restarts the browser if page reload fails
 - Each window operates independently - if one fails, others continue running
+- 
 
-## Contributing
-
-Feel free to submit issues and enhancement requests!
-
-## License
-
-[Your chosen license]
+###### Used this a few times for harmless pranks on GitHub. Boosted views for a few developers with "view counters" on their profile's README.md files.

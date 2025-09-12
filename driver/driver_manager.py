@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-def create():
+def create_driver():
     driver = Options()
     driver.add_argument('--no-sandbox')
     driver.add_argument('--disable-dev-shm-usage')
@@ -14,3 +14,7 @@ def create():
     except Exception as e:
         print(f"Error setting up Chrome WebDriver: {e}")
         return None
+    
+    
+    
+

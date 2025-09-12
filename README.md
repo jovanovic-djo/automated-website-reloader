@@ -1,3 +1,5 @@
+# THIS DOCUMENTATION IS DEPRICATED [update in progress]
+
 # Automated Website Reloader
 
 A Python script that automatically refreshes multiple websites simultaneously at specified intervals using Selenium and Chrome WebDriver.
